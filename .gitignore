@@ -1,0 +1,18 @@
+# Dependencies (this repo has none at runtime; guards against accidents)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Agent working directories
+.impeccable/
+.claude/settings.local.json
+
+# Run artifacts produced by these skills in a consuming repo
+.testpilot/

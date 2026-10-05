@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only by default; no job here needs more. This is also what makes the
+# workflow safe to run on pull requests from forks.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+
+      - name: Test the validator
+        run: node tests/run.mjs
+
+      - name: Validate skills
+        run: node scripts/validate-skills.mjs
+
+      - name: Check vendored shared references are in sync
+        run: node scripts/sync-shared.mjs --check
+
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          globs: '**/*.md'
+
+      # Offline: checks relative links only. No network, so no rate limits, no
+      # token, and it works identically on fork pull requests. External links are
+      # covered by the scheduled links.yml workflow instead.
+      - name: Check relative links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --offline --include-fragments --root-dir "$(pwd)" .
+          fail: true
+
+      - name: Reject oversized files
+        run: |
+          big=$(git ls-files -z | xargs -0 -r du -k 2>/dev/null | awk '$1 > 1024 {print $2}')
+          if [ -n "$big" ]; then
+            echo "These files exceed the 1 MiB cap:"
+            echo "$big"
+            exit 1
+          fi
+          echo "No oversized files."

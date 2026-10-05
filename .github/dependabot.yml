@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Third-party actions are pinned to full commit SHAs, which is the only
+  # immutable reference GitHub offers. Dependabot does the bumping so pinning
+  # does not become manual toil.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

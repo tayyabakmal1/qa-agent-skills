@@ -1,0 +1,43 @@
+{
+  // Contributor-friendly: only rules that catch real problems.
+  // Prose style is not policed here -- scripts/validate-skills.mjs enforces
+  // skill structure, which is the thing that actually matters in this repo.
+  "config": {
+    "default": true,
+
+    // Long lines are fine in tables and prose; wrapping markdown hurts diffs.
+    "MD013": false,
+
+    // Duplicate headings are expected across sibling sections in skills.
+    "MD024": { "siblings_only": true },
+
+    // Skills legitimately use multiple top-level concepts.
+    "MD025": { "front_matter_title": "" },
+
+    // The skill template deliberately uses bold labels (Evidence requirements,
+    // Definition of done, Handoff) as sub-structure inside "## Outputs". They are
+    // contract labels, not navigation headings, and the validator's required-section
+    // check keys on H2s -- promoting these to H3 would blur that boundary.
+    "MD036": false,
+
+    // Inline HTML is used for vendored-file banners and template comments.
+    "MD033": { "allowed_elements": ["br", "details", "summary", "img"] },
+
+    // Bare URLs appear in citations; not worth the ceremony.
+    "MD034": false,
+
+    // First line is frontmatter, not a heading.
+    "MD041": false,
+
+    // Table separator style. "|---|---|" is the near-universal markdown
+    // convention; requiring "| --- | --- |" would add padding to every row of
+    // every decision table in the repo for no readability gain.
+    "MD060": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "node_modules/**",
+    "LICENSE",
+    "tests/fixtures/**"
+  ]
+}

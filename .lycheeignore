@@ -1,0 +1,7 @@
+# Example/placeholder hosts used inside skill documentation.
+^https?://example\.(com|org|net)
+^https?://localhost
+^https?://127\.0\.0\.1
+
+# Requires auth or rate-limits aggressively in CI.
+^https?://(www\.)?linkedin\.com

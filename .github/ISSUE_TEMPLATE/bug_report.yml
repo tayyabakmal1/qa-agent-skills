@@ -1,0 +1,41 @@
+name: Bug report
+description: A skill produced wrong, misleading, or unusable output.
+labels: [bug]
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Which skill
+      placeholder: pr-risk-analyzer
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      placeholder: Claude Code 2.1.x / Cursor / Codex / Gemini CLI
+    validations:
+      required: true
+
+  - type: textarea
+    id: input
+    attributes:
+      label: What you asked for
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What you got
+      description: Paste the output. Redact anything private.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true

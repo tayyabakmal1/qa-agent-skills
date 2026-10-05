@@ -1,0 +1,70 @@
+name: Propose a skill
+description: Suggest a new QA skill for this repo.
+title: 'skill: <name>'
+labels: [skill-proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most proposals are rejected for one of four reasons. Answering the questions
+        below honestly saves you writing a skill that will not be merged:
+
+        - it duplicates an existing skill's trigger
+        - it has no decision logic (it is a prompt, not a skill)
+        - its output cannot be verified
+        - it restates what a competent engineer already knows
+
+  - type: input
+    id: name
+    attributes:
+      label: Proposed name
+      description: Lowercase, hyphenated, and it must say what the skill produces.
+      placeholder: api-contract-tester
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger
+    attributes:
+      label: Trigger phrases
+      description: What would a user literally type that should fire this skill? Quote real phrasings.
+      placeholder: |
+        "does this API still match the spec"
+        "check for breaking changes in our OpenAPI"
+    validations:
+      required: true
+
+  - type: textarea
+    id: anti-trigger
+    attributes:
+      label: Anti-trigger
+      description: Which existing skill is this most likely to be confused with, and how do they differ?
+      placeholder: Not api-test-generator -- that writes tests for endpoints; this compares two spec versions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output artifact
+      description: What concrete thing does it produce? "Analysis" and "recommendations" are not artifacts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision-logic
+    attributes:
+      label: Decision logic
+      description: >-
+        The expert judgement this encodes -- ideally as a table. This is what separates a
+        skill from a prompt. If you cannot fill this in, the skill is probably not needed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: How would you know the output is correct?
+      description: What evidence does it cite? What can a reviewer check?
+    validations:
+      required: true

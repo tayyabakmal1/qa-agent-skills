@@ -1,0 +1,25 @@
+name: external-links
+
+# External links rot on their own schedule, not on ours. Checking them in the PR
+# gate would fail contributors' pull requests for reasons unrelated to their change,
+# so this runs weekly. A failed scheduled run notifies the repository owner, which
+# is enough signal and avoids a third-party action just to open an issue.
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  external-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check external links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --cache --max-cache-age 1d --no-progress .
+          fail: true

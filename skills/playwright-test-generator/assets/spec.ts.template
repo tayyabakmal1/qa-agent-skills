@@ -1,0 +1,76 @@
+// Playwright spec skeleton. Copy into the config's testDir, never into a run
+// directory. Replace every ALL_CAPS placeholder and delete the guidance comments
+// that no longer apply. Keep the import style of the specs already in this repo:
+// if they import a fixtures module, import that instead of '@playwright/test'.
+
+import { test, expect } from '@playwright/test';
+// import { test, expect } from '../fixtures/app';  // preferred when the repo has one
+
+// A fixture owns setup AND teardown, so the resource dies with the test even when
+// the test fails. beforeEach + a module-level variable does not: under parallel
+// workers that variable is shared state and the suite fails only in CI.
+//
+// const test = base.extend<{ ORDER: Order }>({
+//   ORDER: async ({ request }, use) => {
+//     const order = await createOrderViaApi(request);   // build data through the app's
+//     await use(order);                                 // own API, not a SQL seed
+//     await deleteOrderViaApi(request, order.id);       // runs even if the test failed
+//   },
+// });
+
+test.describe('FEATURE — SHORT BEHAVIOUR PHRASE', () => {
+  // Authentication comes from storageState produced by the setup project, so this
+  // file does not sign in. Exactly one spec in the suite signs in through the UI
+  // and asserts the login flow itself; every other spec reuses the session.
+  // test.use({ storageState: 'playwright/.auth/user.json' });
+
+  test('OUTCOME, stated so it can fail — e.g. "rejects a transfer over the daily limit"', async ({ page }) => {
+    // Data unique per run. Never "the first row", never a seeded record another
+    // test mutates, never an autoincrement id assumed to start at 1.
+    const email = `user-${crypto.randomUUID()}@example.test`;
+
+    await test.step('ARRANGE — reach the starting state', async () => {
+      // Relative path: baseURL comes from the config. Do not hardcode a host.
+      await page.goto('/PATH');
+      await expect(page.getByRole('heading', { name: 'PAGE NAME' })).toBeVisible();
+    });
+
+    await test.step('ACT — the one user action under test', async () => {
+      // Locator order: role+accessible name, then label/placeholder/text, then
+      // test id. Structural CSS, XPath and nth-child are never acceptable here.
+      await page.getByLabel('FIELD LABEL').fill(email);
+      await page.getByRole('button', { name: 'BUTTON NAME' }).click();
+    });
+
+    await test.step('ASSERT — what the user perceives', async () => {
+      // Web-first assertions retry until the timeout. expect(await x.isVisible())
+      // reads once and races the render.
+      await expect(page.getByRole('alert')).toHaveText('EXPECTED MESSAGE');
+      await expect(page).toHaveURL(/\/EXPECTED-PATH\//);
+      await expect(page.getByRole('listitem')).toHaveCount(EXPECTED_N);
+    });
+
+    // Strict mode: a locator matching two elements is an error, not a warning.
+    // Narrow by container or content rather than reaching for .first():
+    //   page.getByRole('row', { name: 'ORDER-123' }).getByRole('button', { name: 'Cancel' })
+    //   page.getByRole('listitem').filter({ hasText: 'ITEM NAME' })
+  });
+
+  test('NEGATIVE CASE — the action is rejected', async ({ page, request }) => {
+    // Capture the pre-state so the absence assertion can be exact.
+    const before = await countViaApi(request, 'RESOURCE');
+
+    await page.getByRole('button', { name: 'BUTTON NAME' }).click();
+
+    // Half a test asserts the error. The other half asserts nothing changed.
+    await expect(page.getByRole('alert')).toContainText('EXPECTED ERROR');
+    expect(await countViaApi(request, 'RESOURCE')).toBe(before);
+  });
+
+  // Never: page.waitForTimeout(N), sleep(N), or any fixed duration as the wait.
+  // A duration in a test means the wait condition is unknown. Wait for the
+  // condition instead — a web-first assertion, toHaveURL, or a response:
+  //   const done = page.waitForResponse(r => r.url().includes('/api/RESOURCE') && r.ok());
+  //   await page.getByRole('button', { name: 'Save' }).click();
+  //   await done;
+});
